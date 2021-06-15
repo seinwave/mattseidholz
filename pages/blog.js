@@ -1,19 +1,44 @@
-import React from "react";
+import React, { useEffect, useLayoutEffect, useState, createRef } from "react";
 import { getAllPosts } from "../lib/data/posts-api";
 import styled from "styled-components";
 import { ServerStyleSheet } from "styled-components";
 import { Helmet } from "react-helmet";
-import { COLORS, FONTSIZES, SPACING, WEIGHTS } from "../styles/constants";
+import { COLORS, FONTSIZES } from "../styles/constants";
 import { v4 as uuid } from "uuid";
 import Link from "next/link";
 
 export default function Index({ posts, ssrStyles }) {
+  const [yearRefs, setYearRefs] = useState([]);
   let years = [];
   posts.map((post) => years.push(parseInt(post.frontmatter.year)));
   let uniqueYears = new Set(years);
-
   years = [...uniqueYears];
   years.sort((a, b) => (a > b ? -1 : 1));
+  const yearsLength = years.length;
+
+  useEffect(() => {
+    setYearRefs((yearRefs) => {
+      return Array(yearsLength)
+        .fill()
+        .map((_, i) => yearRefs[i] || createRef());
+    });
+    window.addEventListener("scroll", () => handleScroll());
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [yearsLength]);
+
+  function handleScroll() {
+    yearRefs.map((year) => {
+      if (
+        year.current.getBoundingClientRect().top < 96 &&
+        year.current.getBoundingClientRect().top > 0
+      ) {
+        //todo: we are returning the correct div — now, how do we style it?
+        return console.log(year.current.textContent);
+      }
+    });
+  }
+
   return (
     <>
       <Helmet>
@@ -21,11 +46,11 @@ export default function Index({ posts, ssrStyles }) {
       </Helmet>
       <Wrapper>
         <BlogWrapper>
-          <BlogTitle>blolg</BlogTitle>
+          <BlogTitle>Mattblog</BlogTitle>
           <BlogList>
-            {years.map((year) => {
+            {years.map((year, i) => {
               return (
-                <YearWrapper key={uuid()}>
+                <YearWrapper key={uuid()} ref={yearRefs[i]}>
                   <Year>{year}</Year>
                   {posts
                     .filter((post) => post.frontmatter.year == year)
@@ -116,6 +141,7 @@ const YearWrapper = styled.div`
   display: block;
   width: 100%;
   padding: 8px 36px;
+  border: solid 1px red;
   &:last-of-type {
     margin-bottom: 50vh;
   }
@@ -129,10 +155,11 @@ const Year = styled.div`
   position: sticky;
   top: 96px;
   font-size: 38px;
-
+  padding: 1rem 0px;
   background-color: #fff;
   font-weight: 700;
   margin-bottom: 24px;
+  border-bottom: solid 1px lavender;
   @media (max-width: 500px) {
     font-size: 4rem;
     margin-left: -1.5rem;
@@ -156,12 +183,10 @@ const PublishedDateWrapper = styled.div`
   align-items: flex-end;
   border-right: solid 1px ${COLORS.gray[300]};
   padding-right: 2px;
-
   width: 64px;
 
   @media (max-width: 500px) {
     padding-right: 12px;
-
     width: 64px;
   }
 `;
