@@ -12,8 +12,10 @@ export const COLORS = {
 };
 
 export const FONTSIZES = {
-  pageHead: "48px",
+  pageHeadXL: "48px",
   postTitle: "36px",
+  pageHead: "20px",
+  base: "16px",
 };
 
 export const SPACING = {};

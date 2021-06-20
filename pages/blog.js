@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState, createRef } from "react";
+import React, { useEffect, useState, createRef } from "react";
 import { getAllPosts } from "../lib/data/posts-api";
 import styled from "styled-components";
 import { ServerStyleSheet } from "styled-components";
@@ -9,6 +9,7 @@ import Link from "next/link";
 
 export default function Index({ posts, ssrStyles }) {
   const [yearRefs, setYearRefs] = useState([]);
+
   let years = [];
   posts.map((post) => years.push(parseInt(post.frontmatter.year)));
   let uniqueYears = new Set(years);
@@ -22,19 +23,20 @@ export default function Index({ posts, ssrStyles }) {
         .fill()
         .map((_, i) => yearRefs[i] || createRef());
     });
+
     window.addEventListener("scroll", () => handleScroll());
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, [yearsLength]);
 
+  //todo: add some neato scrolling effects
   function handleScroll() {
     yearRefs.map((year) => {
       if (
         year.current.getBoundingClientRect().top < 96 &&
         year.current.getBoundingClientRect().top > 0
       ) {
-        //todo: we are returning the correct div — now, how do we style it?
-        return console.log(year.current.textContent);
+        return console.log("year");
       }
     });
   }
@@ -61,21 +63,23 @@ export default function Index({ posts, ssrStyles }) {
                     )
                     .map((post) => {
                       return (
-                        <IndividualPostWrapper key={uuid()}>
-                          <PublishedDateWrapper>
-                            <PublishedDate>
-                              {post.frontmatter.human_published
-                                ? post.frontmatter.human_published.replace(
-                                    /,\s\d\d\d\d/,
-                                    ""
-                                  )
-                                : "Jun 01"}
-                            </PublishedDate>
-                          </PublishedDateWrapper>
-                          <Link
-                            as={`/posts/${post.frontmatter.slug}`}
-                            href="/posts/[slug]"
-                          >
+                        <Link
+                          key={uuid()}
+                          as={`/posts/${post.frontmatter.slug}`}
+                          href="/posts/[slug]"
+                        >
+                          <IndividualPostWrapper>
+                            <PublishedDateWrapper>
+                              <PublishedDate>
+                                {post.frontmatter.human_published
+                                  ? post.frontmatter.human_published.replace(
+                                      /,\s\d\d\d\d/,
+                                      ""
+                                    )
+                                  : "Jun 01"}
+                              </PublishedDate>
+                            </PublishedDateWrapper>
+
                             <PostContentWrapper>
                               <PostTopLineWrapper>
                                 <Title>{post.frontmatter.title}</Title>
@@ -87,8 +91,8 @@ export default function Index({ posts, ssrStyles }) {
                                   : "A brief snippet of a line from a movie, whomst is bad"}
                               </Summary>
                             </PostContentWrapper>
-                          </Link>
-                        </IndividualPostWrapper>
+                          </IndividualPostWrapper>
+                        </Link>
                       );
                     })}
                 </YearWrapper>
@@ -124,7 +128,7 @@ const BlogWrapper = styled.div`
 `;
 
 const BlogTitle = styled.header`
-  font-size: ${FONTSIZES.pageHead};
+  font-size: ${FONTSIZES.postTitle};
   position: sticky;
   display: block;
   height: 96px;
@@ -141,7 +145,7 @@ const YearWrapper = styled.div`
   display: block;
   width: 100%;
   padding: 8px 36px;
-  border: solid 1px red;
+
   &:last-of-type {
     margin-bottom: 50vh;
   }
@@ -159,7 +163,7 @@ const Year = styled.div`
   background-color: #fff;
   font-weight: 700;
   margin-bottom: 24px;
-  border-bottom: solid 1px lavender;
+
   @media (max-width: 500px) {
     font-size: 4rem;
     margin-left: -1.5rem;
@@ -174,15 +178,22 @@ const PostsContainer = styled.div`
 
 const IndividualPostWrapper = styled.div`
   margin: 32px 8px;
+  padding: 8px;
   display: flex;
+  border-radius: 8px;
+  transition: background-color 0.1s ease;
+  &:hover {
+    background-color: ${COLORS.gray[100]};
+    text-decoration: none;
+    cursor: pointer;
+  }
 `;
 
 const PublishedDateWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  border-right: solid 1px ${COLORS.gray[300]};
-  padding-right: 2px;
+  padding-top: 4px;
   width: 64px;
 
   @media (max-width: 500px) {
@@ -208,10 +219,6 @@ const PostContentWrapper = styled.div`
   flex-direction: column;
   gap: 12px;
   width: 550px;
-  &:hover {
-    text-decoration: underline;
-    cursor: pointer;
-  }
 `;
 
 const PostTopLineWrapper = styled.div`
