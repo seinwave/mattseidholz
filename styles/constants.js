@@ -25,3 +25,30 @@ export const WEIGHTS = {
   medium: 600,
   bold: 800,
 };
+
+export const EMOJIS = {
+  movie: "📽️",
+  restaurant: "🍔",
+  album: "🎵",
+  show: "📺",
+  book: "📖",
+  event: "",
+  shop: "🏬",
+  experience: "🛶",
+  performance: "🎸",
+  play: "🎭",
+  pizza: "🍕",
+  bagel: "🥯",
+  art: "🎨",
+  judo: "🥋",
+};
+
+export const RATINGS = {
+  hate: "🔥💩🔥",
+  0: "💩",
+  1: "⭐",
+  2: "⭐⭐",
+  3: "⭐⭐⭐",
+  4: "⭐⭐⭐⭐",
+  5: "🌟🌟🌟🌟🌟",
+};

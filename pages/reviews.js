@@ -1,12 +1,12 @@
-import React, { useEffect, useLayoutEffect, useState, createRef } from "react";
+import React, { useMemo } from "react";
 import { useTable } from "react-table";
 import { getAllReviews } from "../lib/data/reviews-api";
 import styled from "styled-components";
 import { ServerStyleSheet } from "styled-components";
 import { Helmet } from "react-helmet";
-import { COLORS, FONTSIZES } from "../styles/constants";
-import { v4 as uuid } from "uuid";
-import Link from "next/link";
+import { COLORS, FONTSIZES, RATINGS, EMOJIS } from "../styles/CONSTANTS";
+
+import RatingCell from "../lib/components/reviews/TableCells/RatingCell";
 
 /*---
 layout: post
@@ -53,7 +53,12 @@ export default function Index({ reviews, ssrStyles }) {
     []
   );
 
-  console.log(data);
+  const defaultColumn = useMemo(
+    () => ({
+      RatingCell: RatingCell,
+    }),
+    []
+  );
 
   const tableInstance = useTable({ columns, data });
 
@@ -80,21 +85,52 @@ export default function Index({ reviews, ssrStyles }) {
                 </tr>
               ))}
             </thead>
-            <tbody {...getTableBodyProps()}>
+            <TableBody {...getTableBodyProps()}>
               {rows.map((row) => {
-                console.log(row);
+                const {
+                  values: { rating: rating, type: type },
+                } = row;
                 prepareRow(row);
                 return (
-                  <tr {...row.getRowProps()}>
+                  <Review {...row.getRowProps()}>
                     {row.cells.map((cell) => {
+                      if (cell.column.Header === "Rating") {
+                        return (
+                          <Cell {...cell.getCellProps()}>
+                            {cell.render(
+                              <RatingCellContainer>
+                                <RatingCell
+                                  rating={RATINGS[rating]}
+                                ></RatingCell>
+                              </RatingCellContainer>
+                            )}
+                          </Cell>
+                        );
+                      }
+
+                      if (cell.column.Header === "Type") {
+                        return (
+                          <Cell {...cell.getCellProps()}>
+                            {cell.render(
+                              <TypeCellContainer>
+                                <RatingCell
+                                  rating={EMOJIS[type.toLowerCase()]}
+                                ></RatingCell>
+                              </TypeCellContainer>
+                            )}
+                          </Cell>
+                        );
+                      }
                       return (
-                        <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                        <Cell {...cell.getCellProps()}>
+                          {cell.render("Cell")}
+                        </Cell>
                       );
                     })}
-                  </tr>
+                  </Review>
                 );
               })}
-            </tbody>
+            </TableBody>
           </ReviewList>
         </BlogWrapper>
       </Wrapper>
@@ -115,7 +151,8 @@ export function getStaticProps() {
 }
 
 const Wrapper = styled.div`
-  width: 800px;
+  box-sizing: border-box;
+  width: 1100px;
   margin-left: auto;
   margin-right: auto;
 `;
@@ -136,4 +173,42 @@ const BlogTitle = styled.header`
 
 const ReviewList = styled.table`
   position: relative;
+  padding: 8px;
+  font-size: 1.25rem;
+  border-collapse: collapse;
+  border-radius: 8px;
+`;
+
+const TableBody = styled.tbody`
+  border-radius: 8px;
+  padding: 8px;
+`;
+
+const Review = styled.tr`
+  border-radius: 8px;
+  padding: 8px;
+  margin: 8px;
+  &:hover {
+    background-color: ${COLORS.gray[100]};
+    text-decoration: none;
+    cursor: pointer;
+  }
+`;
+
+const Cell = styled.td`
+  margin: 8px;
+  padding: 8px;
+  border-style: hidden;
+`;
+
+const RatingCellContainer = styled(Cell)`
+  width: 150px;
+  display: flex;
+  font-size: 25px;
+  justify-content: center;
+`;
+
+const TypeCellContainer = styled(Cell)`
+  width: 40px;
+  font-size: 35px;
 `;

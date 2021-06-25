@@ -3,7 +3,7 @@ import { getAllPosts } from "../lib/data/posts-api";
 import styled from "styled-components";
 import { ServerStyleSheet } from "styled-components";
 import { Helmet } from "react-helmet";
-import { COLORS, FONTSIZES } from "../styles/constants";
+import { COLORS, FONTSIZES } from "../styles/CONSTANTS";
 import { v4 as uuid } from "uuid";
 import Link from "next/link";
 

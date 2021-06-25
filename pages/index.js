@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { ServerStyleSheet } from "styled-components";
 import { Helmet } from "react-helmet";
-import { COLORS, FONTSIZES, SPACING, WEIGHTS } from "../styles/constants";
+import { COLORS, FONTSIZES, SPACING, WEIGHTS } from "../styles/CONSTANTS";
 import Link from "next/link";
 
 export function getStaticProps() {
