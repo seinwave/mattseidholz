@@ -1,12 +1,9 @@
 import React, { useMemo } from "react";
-import { useTable } from "react-table";
 import { getAllReviews } from "../lib/data/reviews-api";
 import styled from "styled-components";
 import { ServerStyleSheet } from "styled-components";
 import { Helmet } from "react-helmet";
 import { COLORS, FONTSIZES, RATINGS, EMOJIS } from "../styles/CONSTANTS";
-
-import RatingCell from "../lib/components/reviews/TableCells/RatingCell";
 
 /*---
 layout: post
@@ -22,48 +19,6 @@ summary: A new personal pizza favorite in NYC
 
 export default function Index({ reviews, ssrStyles }) {
   const data = React.useMemo(() => reviews.map((review) => review.frontmatter));
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: "Thing",
-        accessor: "title",
-      },
-      {
-        Header: "Type",
-        accessor: "type",
-      },
-      {
-        Header: "Creator",
-        accessor: "creator",
-      },
-      {
-        Header: "Consumed On",
-        accessor: "human_published",
-      },
-
-      {
-        Header: "Rating",
-        accessor: "rating",
-      },
-      {
-        Header: "Summary",
-        accessor: "summary",
-      },
-    ],
-    []
-  );
-
-  const defaultColumn = useMemo(
-    () => ({
-      RatingCell: RatingCell,
-    }),
-    []
-  );
-
-  const tableInstance = useTable({ columns, data });
-
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    tableInstance;
 
   return (
     <>
@@ -73,64 +28,29 @@ export default function Index({ reviews, ssrStyles }) {
       <Wrapper>
         <BlogWrapper>
           <BlogTitle>MattReviews</BlogTitle>
-          <ReviewList {...getTableProps()}>
-            <thead>
-              {headerGroups.map((headerGroup) => (
-                <tr {...headerGroup.getHeaderGroupProps()}>
-                  {headerGroup.headers.map((column) => (
-                    <th {...column.getHeaderProps()}>
-                      {column.render("Header")}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <TableBody {...getTableBodyProps()}>
-              {rows.map((row) => {
-                const {
-                  values: { rating: rating, type: type },
-                } = row;
-                prepareRow(row);
-                return (
-                  <Review {...row.getRowProps()}>
-                    {row.cells.map((cell) => {
-                      if (cell.column.Header === "Rating") {
-                        return (
-                          <Cell {...cell.getCellProps()}>
-                            {cell.render(
-                              <RatingCellContainer>
-                                <RatingCell
-                                  rating={RATINGS[rating]}
-                                ></RatingCell>
-                              </RatingCellContainer>
-                            )}
-                          </Cell>
-                        );
-                      }
+          <ReviewList>
+            {data.map((review) => {
+              return (
+                <Review data={review}>
+                  <ReviewTopRow>
+                    <TitleTuple>
+                      <Category>{EMOJIS[review.type.toLowerCase()]}</Category>
+                      <ReviewTitle>{review.title}</ReviewTitle>
+                    </TitleTuple>
 
-                      if (cell.column.Header === "Type") {
-                        return (
-                          <Cell {...cell.getCellProps()}>
-                            {cell.render(
-                              <TypeCellContainer>
-                                <RatingCell
-                                  rating={EMOJIS[type.toLowerCase()]}
-                                ></RatingCell>
-                              </TypeCellContainer>
-                            )}
-                          </Cell>
-                        );
-                      }
-                      return (
-                        <Cell {...cell.getCellProps()}>
-                          {cell.render("Cell")}
-                        </Cell>
-                      );
-                    })}
-                  </Review>
-                );
-              })}
-            </TableBody>
+                    <Rating>{RATINGS[review.rating]}</Rating>
+                  </ReviewTopRow>
+                  <ReviewDateRow>
+                    {" "}
+                    <Date>{review.human_published}</Date>
+                  </ReviewDateRow>
+                  <ReviewSummaryRow>
+                    {" "}
+                    <Summary>{review.summary}</Summary>
+                  </ReviewSummaryRow>
+                </Review>
+              );
+            })}
           </ReviewList>
         </BlogWrapper>
       </Wrapper>
@@ -152,9 +72,12 @@ export function getStaticProps() {
 
 const Wrapper = styled.div`
   box-sizing: border-box;
-  width: 1100px;
+  width: 800px;
   margin-left: auto;
   margin-right: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 `;
 
 const BlogWrapper = styled.div`
@@ -171,44 +94,99 @@ const BlogTitle = styled.header`
   background-color: #fff;
 `;
 
-const ReviewList = styled.table`
+const ReviewList = styled.div`
   position: relative;
   padding: 8px;
   font-size: 1.25rem;
   border-collapse: collapse;
   border-radius: 8px;
+  width: 700px;
 `;
 
-const TableBody = styled.tbody`
+const Review = styled.div`
   border-radius: 8px;
-  padding: 8px;
-`;
-
-const Review = styled.tr`
-  border-radius: 8px;
-  padding: 8px;
-  margin: 8px;
+  padding: 18px 36px;
+  margin: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   &:hover {
     background-color: ${COLORS.gray[100]};
     text-decoration: none;
     cursor: pointer;
   }
+  @media (max-width: 500px) {
+    margin: 36px 4px;
+  }
 `;
 
-const Cell = styled.td`
-  margin: 8px;
-  padding: 8px;
-  border-style: hidden;
-`;
-
-const RatingCellContainer = styled(Cell)`
-  width: 150px;
+const ReviewTopRow = styled.div`
   display: flex;
-  font-size: 25px;
-  justify-content: center;
+  flex-direction: row;
+  align-items: baseline;
+  @media (max-width: 500px) {
+    flex-direction: column;
+    gap: 5px;
+    font-size: 2.2rem;
+  }
 `;
 
-const TypeCellContainer = styled(Cell)`
-  width: 40px;
-  font-size: 35px;
+const TitleTuple = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+
+  @media (max-width: 500px) {
+    display: flex;
+    flex-direction: row;
+  }
+`;
+
+const ReviewTitle = styled.span`
+  font-size: 1.6rem;
+`;
+
+const Category = styled.span`
+  font-size: 2rem;
+  margin-right: 1.5rem;
+  @media (max-width: 500px) {
+    font-size: 3rem;
+  }
+`;
+
+const Rating = styled.span`
+  margin-left: auto;
+  font-size: 1.5rem;
+  @media (max-width: 500px) {
+    margin-left: revert;
+    font-size: 2.2rem;
+  }
+`;
+
+const ReviewDateRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  padding-left: 3.3rem;
+`;
+
+const Date = styled.em`
+  font-size: 1rem;
+  color: ${COLORS["gray"[300]]};
+  @media (max-width: 500px) {
+    margin-left: revert;
+    font-size: 1.6rem;
+  }
+`;
+
+const ReviewSummaryRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  padding-left: 3.3rem;
+`;
+
+const Summary = styled.span`
+  @media (max-width: 500px) {
+    margin-left: revert;
+    font-size: 2rem;
+  }
 `;
