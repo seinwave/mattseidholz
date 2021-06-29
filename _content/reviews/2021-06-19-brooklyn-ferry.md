@@ -3,7 +3,7 @@ layout: post
 author: matt
 title: Brooklyn ferry
 creator: MTA
-type: Experience
+type: experience
 published: 2021-06-18
 human_published: Jun 18, 2021
 rating: 5

@@ -3,7 +3,7 @@ import { getAllPosts } from "../lib/data/posts-api";
 import styled from "styled-components";
 import { ServerStyleSheet } from "styled-components";
 import { Helmet } from "react-helmet";
-import { COLORS, FONTSIZES } from "../styles/CONSTANTS";
+import { COLORS, FONTSIZES, QUERIES } from "../styles/CONSTANTS";
 import { v4 as uuid } from "uuid";
 import Link from "next/link";
 
@@ -121,6 +121,9 @@ const Wrapper = styled.div`
   width: 800px;
   margin-left: auto;
   margin-right: auto;
+  @media ${QUERIES.tablet} {
+    width: revert;
+  }
 `;
 
 const BlogWrapper = styled.div`
@@ -151,6 +154,9 @@ const YearWrapper = styled.div`
   }
   @media (max-width: 500px) {
     padding: 0rem, 550px;
+  }
+  @media ${QUERIES.tablet} {
+    width: revert;
   }
 `;
 

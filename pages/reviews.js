@@ -3,19 +3,13 @@ import { getAllReviews } from "../lib/data/reviews-api";
 import styled from "styled-components";
 import { ServerStyleSheet } from "styled-components";
 import { Helmet } from "react-helmet";
-import { COLORS, FONTSIZES, RATINGS, EMOJIS } from "../styles/CONSTANTS";
-
-/*---
-layout: post
-author: matt
-title: Johns of Bleeker Street
-creator: MTA
-type: Restaurant
-published: 2021-06-18
-human_published: Jun 18, 2021
-rating: 5
-summary: A new personal pizza favorite in NYC
---- */
+import {
+  COLORS,
+  FONTSIZES,
+  RATINGS,
+  EMOJIS,
+  QUERIES,
+} from "../styles/CONSTANTS";
 
 export default function Index({ reviews, ssrStyles }) {
   const data = React.useMemo(() => reviews.map((review) => review.frontmatter));
@@ -34,7 +28,14 @@ export default function Index({ reviews, ssrStyles }) {
                 <Review data={review}>
                   <ReviewTopRow>
                     <TitleTuple>
-                      <Category>{EMOJIS[review.type.toLowerCase()]}</Category>
+                      <Category
+                        title={
+                          review.type.charAt(0).toUpperCase() +
+                          review.type.slice(1)
+                        }
+                      >
+                        {EMOJIS[review.type.toLowerCase()]}
+                      </Category>
                       <ReviewTitle>{review.title}</ReviewTitle>
                     </TitleTuple>
 
@@ -70,6 +71,17 @@ export function getStaticProps() {
   };
 }
 
+/*export const BREAKPOINTS = {
+  tabletMin: 550,
+  laptopMin: 1100,
+  desktopMin: 1500,
+};
+export const QUERIES = {
+  tabletAndUp: `(max-width: ${BREAKPOINTS.tabletMax / 16}rem)`,
+  laptopAndUp: `(max-width: ${BREAKPOINTS.laptopMax / 16}rem)`,
+  desktopAndUp: `(max-width: ${BREAKPOINTS.desktopMax / 16}rem)`,
+}; */
+
 const Wrapper = styled.div`
   box-sizing: border-box;
   width: 800px;
@@ -78,6 +90,9 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
+  @media ${QUERIES.tablet} {
+    width: revert;
+  }
 `;
 
 const BlogWrapper = styled.div`
@@ -101,10 +116,14 @@ const ReviewList = styled.div`
   border-collapse: collapse;
   border-radius: 8px;
   width: 700px;
+  @media ${QUERIES.tablet} {
+    width: revert;
+  }
 `;
 
 const Review = styled.div`
   border-radius: 8px;
+  border: solid 1px green;
   padding: 18px 36px;
   margin: 16px;
   display: flex;
@@ -115,8 +134,13 @@ const Review = styled.div`
     text-decoration: none;
     cursor: pointer;
   }
-  @media (max-width: 500px) {
+  @media ${QUERIES.tablet} {
+    border: solid 1px blue;
+  }
+
+  @media ${QUERIES.phone} {
     margin: 36px 4px;
+    border: solid 1px red;
   }
 `;
 
@@ -124,9 +148,7 @@ const ReviewTopRow = styled.div`
   display: flex;
   flex-direction: row;
   align-items: baseline;
-  @media (max-width: 500px) {
-    flex-direction: column;
-    gap: 5px;
+  @media ${QUERIES.phone} {
     font-size: 2.2rem;
   }
 `;
@@ -136,7 +158,7 @@ const TitleTuple = styled.div`
   flex-direction: row;
   align-items: baseline;
 
-  @media (max-width: 500px) {
+  @media ${QUERIES.phone} {
     display: flex;
     flex-direction: row;
   }
@@ -160,6 +182,9 @@ const Rating = styled.span`
   @media (max-width: 500px) {
     margin-left: revert;
     font-size: 2.2rem;
+  }
+  @media ${QUERIES.tablet} {
+    margin-left: revert;
   }
 `;
 
