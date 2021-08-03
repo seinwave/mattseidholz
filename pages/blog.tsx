@@ -6,7 +6,6 @@ import { ServerStyleSheet } from "styled-components";
 import { Helmet } from "react-helmet";
 import { COLORS, QUERIES } from "../styles/CONSTANTS";
 import { v4 as uuid } from "uuid";
-import "animate.css";
 import NavBar from "../lib/components/shell/NavBar";
 import Link from "next/link";
 
