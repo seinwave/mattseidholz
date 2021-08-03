@@ -17,17 +17,31 @@ export default function Index({ posts, ssrStyles }) {
   years = [...uniqueYears];
   years.sort((a, b) => (a > b ? -1 : 1));
 
+  const yearsRef = React.useRef([]);
+
   function handleScroll() {
-    console.log("scrolling");
+    const clientY = window.scrollY;
+    yearsRef.current.map((ref, i) => {
+      const rect = ref.getBoundingClientRect();
+      const { y } = rect;
+
+      if (y < 99) {
+        ref.firstChild.classList.add("top-year");
+      }
+
+      if (y > 100 || clientY < 5) {
+        ref.firstChild.classList.remove("top-year");
+      }
+    });
   }
 
   React.useEffect(() => {
+    yearsRef.current = yearsRef.current.slice(0, years.length);
     window.addEventListener("scroll", handleScroll);
 
     return () => window.removeEventListener("scroll", handleScroll);
   });
 
-  const yearRef = React.useRef(null);
   return (
     <>
       <Helmet>
@@ -38,19 +52,12 @@ export default function Index({ posts, ssrStyles }) {
           <NavBar />
 
           <BlogList>
-            <YearWrapper key={uuid()}>
-              <Year ref={yearRef}> 2030</Year>
-              2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030
-              2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030
-              2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030
-              2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030
-              2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030
-              2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030
-              2030 2030 2030 2030 2030 2030 2030 2030 2030 2030
-            </YearWrapper>
             {years.map((year, i) => {
               return (
-                <YearWrapper key={uuid()}>
+                <YearWrapper
+                  ref={(el) => (yearsRef.current[i] = el)}
+                  key={uuid()}
+                >
                   <Year name={year}> {year}</Year>
 
                   {posts
@@ -82,7 +89,6 @@ export default function Index({ posts, ssrStyles }) {
                             <PostContentWrapper>
                               <PostTopLineWrapper>
                                 <Title>{post.frontmatter.title}</Title>
-                                {/* <ReadStatus>Unread</ReadStatus> */}
                               </PostTopLineWrapper>
                               <Summary>
                                 {post.frontmatter.summary
@@ -137,7 +143,7 @@ const YearWrapper = styled.div`
   display: block;
   width: 100%;
   padding: 8px 36px;
-  border: solid 1px blue;
+
   position: relative;
 
   &:last-of-type {
@@ -155,7 +161,7 @@ const Year = styled.div`
   display: block;
   position: sticky;
   top: 96px;
-  font-size: 38px;
+  font-size: 24px;
   padding: 1rem 0px 0px 8px;
   background-color: #fff;
   font-weight: 700;
@@ -163,14 +169,6 @@ const Year = styled.div`
 
   @media ${QUERIES.phone} {
     margin-left: -1.5rem;
-  }
-
-  &:after {
-    display: block;
-    margin: 0;
-    border-bottom: solid 1px #dcdcdc;
-    width: 100%;
-    content: "";
   }
 `;
 

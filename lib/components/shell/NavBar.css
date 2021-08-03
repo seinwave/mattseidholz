@@ -20,5 +20,6 @@
 }
 
 .top-year {
-  box-shadow: 0 2px 2px -2px gray;
+  border-bottom: solid 2px #dcdcdc;
+  transition: border-bottom 2s;
 }
