@@ -2,8 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import { ServerStyleSheet } from "styled-components";
 import { Helmet } from "react-helmet";
-import { COLORS, FONTSIZES, SPACING, WEIGHTS } from "../styles/CONSTANTS";
-import Link from "next/link";
+import { COLORS, FONTSIZES, WEIGHTS } from "../styles/CONSTANTS";
+import NavBar from "../lib/components/shell/NavBar";
 
 export function getStaticProps() {
   const sheet = new ServerStyleSheet();
@@ -22,7 +22,7 @@ export default function Index({ ssrStyles }) {
         <style dangerouslySetInnerHTML={{ __html: ssrStyles }} />
       </Helmet>
       <Wrapper>
-        <SiteHeader>MS</SiteHeader>
+        <NavBar />
         <HeroDescription>
           Matt Seidholz is full-stack developer in Brooklyn.
         </HeroDescription>

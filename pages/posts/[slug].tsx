@@ -1,4 +1,4 @@
-import React, { renderToString } from "react";
+import React from "react";
 import styled from "styled-components";
 import { ServerStyleSheet } from "styled-components";
 import BlogImage from "../../lib/components/blog-post/BlogImage";
@@ -6,14 +6,6 @@ import { getPostBySlug, getAllPosts } from "../../lib/data/posts-api";
 import { serialize } from "next-mdx-remote/serialize";
 import { MDXRemote } from "next-mdx-remote";
 import { Helmet } from "react-helmet";
-
-const StyleProvider = (props) => {
-  return (
-    <StyleSheetManager sheet={props.sheetInstance}>
-      <ThemeProvider theme={THEME}>{props.children}</ThemeProvider>
-    </StyleSheetManager>
-  );
-};
 
 export async function getStaticProps({ params }) {
   const sourceObj = JSON.parse(JSON.stringify(getPostBySlug(params.slug)));

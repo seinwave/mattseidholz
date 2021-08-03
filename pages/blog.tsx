@@ -1,45 +1,43 @@
-import React, { useEffect, useState, createRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { getAllPosts } from "../lib/data/posts-api";
+import { GetStaticProps } from "next";
 import styled from "styled-components";
 import { ServerStyleSheet } from "styled-components";
 import { Helmet } from "react-helmet";
-import { COLORS, FONTSIZES, QUERIES } from "../styles/CONSTANTS";
+import { COLORS, QUERIES } from "../styles/CONSTANTS";
 import { v4 as uuid } from "uuid";
+import "animate.css";
+import Reveal from "react-reveal/Reveal";
+import NavBar from "../lib/components/shell/NavBar";
 import Link from "next/link";
 
 export default function Index({ posts, ssrStyles }) {
-  const [yearRefs, setYearRefs] = useState([]);
+  const yearRef = useRef(null);
+  const blogRef = useRef(null);
+  const [visible, setVisible] = useState(false);
+
+  const callback = (entries) => {
+    console.log(entries);
+    entries.forEach((entry) => {
+      console.log(entry);
+      return setVisible(entry.isIntersecting);
+    });
+  };
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(callback, {
+      rootMargin: "0px",
+      threshold: 1.0,
+    });
+    console.log(blogRef.current);
+    observer.observe(yearRef.current);
+  }, []);
 
   let years = [];
   posts.map((post) => years.push(parseInt(post.frontmatter.year)));
   let uniqueYears = new Set(years);
   years = [...uniqueYears];
   years.sort((a, b) => (a > b ? -1 : 1));
-  const yearsLength = years.length;
-
-  useEffect(() => {
-    setYearRefs((yearRefs) => {
-      return Array(yearsLength)
-        .fill()
-        .map((_, i) => yearRefs[i] || createRef());
-    });
-
-    window.addEventListener("scroll", () => handleScroll());
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [yearsLength]);
-
-  //todo: add some neato scrolling effects
-  function handleScroll() {
-    yearRefs.map((year) => {
-      if (
-        year.current.getBoundingClientRect().top < 96 &&
-        year.current.getBoundingClientRect().top > 0
-      ) {
-        return console.log("year");
-      }
-    });
-  }
 
   return (
     <>
@@ -48,12 +46,18 @@ export default function Index({ posts, ssrStyles }) {
       </Helmet>
       <Wrapper>
         <BlogWrapper>
-          <BlogTitle>Mattblog</BlogTitle>
+          <NavBar />
           <BlogList>
             {years.map((year, i) => {
               return (
-                <YearWrapper key={uuid()} ref={yearRefs[i]}>
-                  <Year>{year}</Year>
+                <YearWrapper key={uuid()}>
+                  <Year>
+                    {visible ? year : "Not a year"}
+                    <Reveal effect="animate__fadeIn">
+                      <YearBoundary></YearBoundary>
+                    </Reveal>
+                  </Year>
+
                   {posts
                     .filter((post) => post.frontmatter.year == year)
                     .sort((post1, post2) =>
@@ -98,6 +102,12 @@ export default function Index({ posts, ssrStyles }) {
                 </YearWrapper>
               );
             })}
+            <Year ref={yearRef}>
+              {visible ? 2999 : "Not a year"}
+              <Reveal effect="animate__fadeIn">
+                <YearBoundary></YearBoundary>
+              </Reveal>
+            </Year>
           </BlogList>
         </BlogWrapper>
       </Wrapper>
@@ -105,7 +115,7 @@ export default function Index({ posts, ssrStyles }) {
   );
 }
 
-export function getStaticProps() {
+export const getStaticProps: GetStaticProps = async (context) => {
   const sheet = new ServerStyleSheet();
   const ssrStyles = sheet.instance.toString();
   const posts = JSON.parse(JSON.stringify(getAllPosts()));
@@ -115,7 +125,7 @@ export function getStaticProps() {
       ssrStyles,
     },
   };
-}
+};
 
 const Wrapper = styled.div`
   width: 800px;
@@ -130,16 +140,6 @@ const BlogWrapper = styled.div`
   position: relative;
 `;
 
-const BlogTitle = styled.header`
-  font-size: ${FONTSIZES.postTitle};
-  position: sticky;
-  display: block;
-  height: 96px;
-  z-index: 1;
-  top: 0;
-  background-color: #fff;
-`;
-
 const BlogList = styled.div`
   position: relative;
 `;
@@ -152,7 +152,7 @@ const YearWrapper = styled.div`
   &:last-of-type {
     margin-bottom: 50vh;
   }
-  @media (max-width: 500px) {
+  @media ${QUERIES.phone} {
     padding: 0rem, 550px;
   }
   @media ${QUERIES.tablet} {
@@ -165,15 +165,18 @@ const Year = styled.div`
   position: sticky;
   top: 96px;
   font-size: 38px;
-  padding: 1rem 0px;
+  padding: 1rem 0px 0.5rem 8px;
   background-color: #fff;
   font-weight: 700;
   margin-bottom: 24px;
 
-  @media (max-width: 500px) {
-    font-size: 4rem;
+  @media ${QUERIES.phone} {
     margin-left: -1.5rem;
   }
+`;
+
+const YearBoundary = styled.div`
+  border: solid 1px red;
 `;
 
 const PostsContainer = styled.div`
@@ -202,19 +205,17 @@ const PublishedDateWrapper = styled.div`
   padding-top: 4px;
   width: 64px;
 
-  @media (max-width: 500px) {
+  @media ${QUERIES.phone} {
     padding-right: 12px;
     width: 64px;
   }
 `;
 
 const PublishedDate = styled.span`
-  font-size: 16px;
   margin-right: 8px;
   justify-self: baseline;
 
-  @media (max-width: 500px) {
-    font-size: 2rem;
+  @media ${QUERIES.phone} {
   }
 `;
 
@@ -236,18 +237,15 @@ const PostTopLineWrapper = styled.div`
 const Title = styled.span`
   font-size: 1.5rem;
   font-weight: 700;
-  @media (max-width: 500px) {
-    font-size: 3rem;
+  @media ${QUERIES.phone} {
   }
 `;
 
 const Summary = styled.span`
-  font-size: 1.25rem;
   font-weight: 400;
   color: ${COLORS.gray[700]};
   max-width: fit-content;
-  @media (max-width: 500px) {
-    font-size: 2rem;
+  @media ${QUERIES.phone} {
   }
 `;
 
