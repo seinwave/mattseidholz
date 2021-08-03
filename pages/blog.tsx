@@ -7,38 +7,27 @@ import { Helmet } from "react-helmet";
 import { COLORS, QUERIES } from "../styles/CONSTANTS";
 import { v4 as uuid } from "uuid";
 import "animate.css";
-import Reveal from "react-reveal/Reveal";
 import NavBar from "../lib/components/shell/NavBar";
 import Link from "next/link";
 
 export default function Index({ posts, ssrStyles }) {
-  const yearRef = useRef(null);
-  const blogRef = useRef(null);
-  const [visible, setVisible] = useState(false);
-
-  const callback = (entries) => {
-    console.log(entries);
-    entries.forEach((entry) => {
-      console.log(entry);
-      return setVisible(entry.isIntersecting);
-    });
-  };
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(callback, {
-      rootMargin: "0px",
-      threshold: 1.0,
-    });
-    console.log(blogRef.current);
-    observer.observe(yearRef.current);
-  }, []);
-
   let years = [];
   posts.map((post) => years.push(parseInt(post.frontmatter.year)));
   let uniqueYears = new Set(years);
   years = [...uniqueYears];
   years.sort((a, b) => (a > b ? -1 : 1));
 
+  function handleScroll() {
+    console.log("scrolling");
+  }
+
+  React.useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  });
+
+  const yearRef = React.useRef(null);
   return (
     <>
       <Helmet>
@@ -47,16 +36,22 @@ export default function Index({ posts, ssrStyles }) {
       <Wrapper>
         <BlogWrapper>
           <NavBar />
+
           <BlogList>
+            <YearWrapper key={uuid()}>
+              <Year ref={yearRef}> 2030</Year>
+              2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030
+              2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030
+              2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030
+              2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030
+              2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030
+              2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030 2030
+              2030 2030 2030 2030 2030 2030 2030 2030 2030 2030
+            </YearWrapper>
             {years.map((year, i) => {
               return (
                 <YearWrapper key={uuid()}>
-                  <Year>
-                    {visible ? year : "Not a year"}
-                    <Reveal effect="animate__fadeIn">
-                      <YearBoundary></YearBoundary>
-                    </Reveal>
-                  </Year>
+                  <Year name={year}> {year}</Year>
 
                   {posts
                     .filter((post) => post.frontmatter.year == year)
@@ -102,12 +97,6 @@ export default function Index({ posts, ssrStyles }) {
                 </YearWrapper>
               );
             })}
-            <Year ref={yearRef}>
-              {visible ? 2999 : "Not a year"}
-              <Reveal effect="animate__fadeIn">
-                <YearBoundary></YearBoundary>
-              </Reveal>
-            </Year>
           </BlogList>
         </BlogWrapper>
       </Wrapper>
@@ -148,6 +137,8 @@ const YearWrapper = styled.div`
   display: block;
   width: 100%;
   padding: 8px 36px;
+  border: solid 1px blue;
+  position: relative;
 
   &:last-of-type {
     margin-bottom: 50vh;
@@ -165,13 +156,21 @@ const Year = styled.div`
   position: sticky;
   top: 96px;
   font-size: 38px;
-  padding: 1rem 0px 0.5rem 8px;
+  padding: 1rem 0px 0px 8px;
   background-color: #fff;
   font-weight: 700;
   margin-bottom: 24px;
 
   @media ${QUERIES.phone} {
     margin-left: -1.5rem;
+  }
+
+  &:after {
+    display: block;
+    margin: 0;
+    border-bottom: solid 1px #dcdcdc;
+    width: 100%;
+    content: "";
   }
 `;
 
