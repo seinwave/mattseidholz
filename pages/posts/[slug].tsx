@@ -14,7 +14,6 @@ export async function getStaticProps({ params }) {
   const data = sourceObj.frontmatter;
   const sheet = new ServerStyleSheet();
   const ssrStyles = sheet.instance.toString();
-  console.log(ssrStyles);
 
   return {
     props: {

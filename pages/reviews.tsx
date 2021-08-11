@@ -71,7 +71,8 @@ export function getStaticProps() {
 
 const Wrapper = styled.div`
   box-sizing: border-box;
-  width: 800px;
+  width: 100%;
+  max-width: 1100px;
   margin-left: auto;
   margin-right: auto;
   @media ${QUERIES.tablet} {

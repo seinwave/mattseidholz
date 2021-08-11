@@ -9,7 +9,7 @@ import { v4 as uuid } from "uuid";
 import NavBar from "../lib/components/shell/NavBar";
 import Link from "next/link";
 
-export default function Index({ posts, ssrStyles }) {
+export default function Blog({ posts, ssrStyles }) {
   let years = [];
   posts.map((post) => years.push(parseInt(post.frontmatter.year)));
   let uniqueYears = new Set(years);
@@ -122,7 +122,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 const Wrapper = styled.div`
-  width: 800px;
+  width: 100%;
+  max-width: 1100px;
   margin-left: auto;
   margin-right: auto;
   @media ${QUERIES.tablet} {
