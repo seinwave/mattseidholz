@@ -12,11 +12,26 @@
 .logo {
   background-color: black;
   color: white;
-  height: 25px;
+  font-size: 36px;
+  padding: 6px;
+}
+
+.nav-link {
+  margin: 0 1rem;
+}
+
+.active.nav-link {
+  text-decoration: underline;
 }
 
 .navlinks {
   margin-left: auto;
+}
+
+@media screen and (max-width: 768px) {
+  .navlinks {
+    display: none;
+  }
 }
 
 .top-year {
