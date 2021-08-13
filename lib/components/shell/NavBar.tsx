@@ -1,10 +1,12 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import styled from "styled-components";
+import styled from "styled-components/";
+import BurgerButton from "./BurgerButton";
 
 export default function NavBar() {
   const router = useRouter();
+  const [open, setOpen] = React.useState(false);
 
   const navMenu = [
     { title: "BLOG", path: "/blog" },
@@ -19,6 +21,7 @@ export default function NavBar() {
       <div className="logo">
         <Link href="/">MS</Link>
       </div>
+      <BurgerButton open={open} setOpen={setOpen}></BurgerButton>
       <div className="navlinks">
         {navMenu.map((item, index) => {
           return (

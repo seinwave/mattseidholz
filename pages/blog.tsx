@@ -43,9 +43,6 @@ export default function Blog({ posts, ssrStyles }) {
 
   return (
     <>
-      <Helmet>
-        <style dangerouslySetInnerHTML={{ __html: ssrStyles }} />
-      </Helmet>
       <Wrapper>
         <BlogWrapper>
           <NavBar />
@@ -110,13 +107,10 @@ export default function Blog({ posts, ssrStyles }) {
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const sheet = new ServerStyleSheet();
-  const ssrStyles = sheet.instance.toString();
   const posts = JSON.parse(JSON.stringify(getAllPosts()));
   return {
     props: {
       posts,
-      ssrStyles,
     },
   };
 };

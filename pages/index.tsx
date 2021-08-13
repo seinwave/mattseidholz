@@ -7,17 +7,7 @@ import { FONTSIZES } from "../styles/CONSTANTS";
 
 import NavBar from "../lib/components/shell/NavBar";
 
-export function getStaticProps() {
-  const sheet = new ServerStyleSheet();
-  const ssrStyles = sheet.instance.toString();
-  return {
-    props: {
-      ssrStyles,
-    },
-  };
-}
-
-export default function Index({ ssrStyles }) {
+export default function Index({}) {
   const [partyTime, setPartyTime] = useState(false);
   const [animated, setAnimated] = useState(true);
 
@@ -27,7 +17,6 @@ export default function Index({ ssrStyles }) {
 
   function handleBlur() {
     setPartyTime(false);
-    setAnimated(true);
   }
 
   function handleBagelClick() {
@@ -36,9 +25,6 @@ export default function Index({ ssrStyles }) {
 
   return (
     <>
-      <Helmet>
-        <style dangerouslySetInnerHTML={{ __html: ssrStyles }} />
-      </Helmet>
       <Wrapper>
         <NavBar />
         <HeroRow style={{ marginTop: "5rem" }}>
@@ -46,7 +32,9 @@ export default function Index({ ssrStyles }) {
             onMouseEnter={() => handleHover()}
             onMouseLeave={() => handleBlur()}
             onClick={() => handleBagelClick()}
-            style={{ animationPlayState: animated ? "running" : "paused" }}
+            style={{
+              animationPlayState: animated ? "running" : "paused",
+            }}
           >
             <RotatingImage
               src={require("../public/images/bagel.svg")}

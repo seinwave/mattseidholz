@@ -12,7 +12,7 @@ import {
 } from "../styles/CONSTANTS";
 import NavBar from "../lib/components/shell/NavBar";
 
-export default function Index({ reviews, ssrStyles }) {
+export default function Index({ reviews }) {
   const data = React.useMemo(
     () => reviews.map((review) => review.frontmatter),
     [reviews]
@@ -20,9 +20,6 @@ export default function Index({ reviews, ssrStyles }) {
 
   return (
     <>
-      <Helmet>
-        <style dangerouslySetInnerHTML={{ __html: ssrStyles }} />
-      </Helmet>
       <Wrapper>
         <NavBar />
         <BlogWrapper>
@@ -58,13 +55,10 @@ export default function Index({ reviews, ssrStyles }) {
 }
 
 export function getStaticProps() {
-  const sheet = new ServerStyleSheet();
-  const ssrStyles = sheet.instance.toString();
   const reviews = JSON.parse(JSON.stringify(getAllReviews()));
   return {
     props: {
       reviews,
-      ssrStyles,
     },
   };
 }
