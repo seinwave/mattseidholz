@@ -1,6 +1,7 @@
 .wrapper {
   display: flex;
   position: sticky;
+  align-items: baseline;
   gap: 16px;
   height: 96px;
   padding: 24px;
@@ -20,11 +21,30 @@
 }
 
 .nav-link {
+  position: relative;
+  font-size: 18px;
   margin: 0 1rem;
 }
 
-.active.nav-link {
-  text-decoration: underline;
+.nav-link::after {
+  position: absolute;
+  top: 23px;
+  left: 0px;
+  content: "";
+  height: 2px;
+  background: transparent;
+  width: 0%;
+}
+
+.nav-link:hover::after {
+  background: #dcdcdc;
+  width: 102%;
+  transition-duration: 0.5s;
+}
+
+.active.nav-link::after {
+  background: black;
+  width: 102%;
 }
 
 .navlinks {
