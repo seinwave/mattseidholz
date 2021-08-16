@@ -1,36 +1,47 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { getAllPosts } from "../lib/data/posts-api";
 import { GetStaticProps } from "next";
-import styled from "styled-components";
-import { ServerStyleSheet } from "styled-components";
-import { Helmet } from "react-helmet";
+import styled, { keyframes } from "styled-components";
 import { COLORS, QUERIES } from "../styles/CONSTANTS";
 import { v4 as uuid } from "uuid";
 import NavBar from "../lib/components/shell/NavBar";
+import BlogYear from "./blogYear";
 import Link from "next/link";
 
-export default function Blog({ posts, ssrStyles }) {
+export default function Blog({ posts }) {
   let years = [];
   posts.map((post) => years.push(parseInt(post.frontmatter.year)));
   let uniqueYears = new Set(years);
   years = [...uniqueYears];
-  years.sort((a, b) => (a > b ? -1 : 1));
+  const sortedYears = years.sort((a, b) => (a > b ? -1 : 1));
+
+  const [topYear, setTopYear] = React.useState<number | undefined>();
+  const [scrollValue, setScrollValue] = React.useState<number>(0);
 
   const yearsRef = React.useRef([]);
 
   function handleScroll() {
     const clientY = window.scrollY;
+
     yearsRef.current.map((ref, i) => {
       const rect = ref.getBoundingClientRect();
-      const { y } = rect;
 
-      if (y < 99) {
-        ref.firstChild.classList.add("top-year");
+      const numericalYear = parseInt(ref.firstChild.textContent);
+      const { y, height } = rect;
+
+      let scrollingValue = document.documentElement.scrollTop;
+
+      if (scrollingValue > scrollValue) {
+        if (topYear !== numericalYear && y < 99 && y > 0) {
+          setTopYear(numericalYear);
+        }
+      } else {
+        if (y < 0 && y + height > 0) {
+          setTopYear(numericalYear);
+        }
       }
 
-      if (y > 100 || clientY < 5) {
-        ref.firstChild.classList.remove("top-year");
-      }
+      setScrollValue(() => (scrollingValue <= 0 ? 0 : scrollingValue));
     });
   }
 
@@ -48,13 +59,13 @@ export default function Blog({ posts, ssrStyles }) {
           <NavBar />
 
           <BlogList>
-            {years.map((year, i) => {
+            {sortedYears.map((year, i) => {
               return (
                 <YearWrapper
                   ref={(el) => (yearsRef.current[i] = el)}
                   key={uuid()}
                 >
-                  <Year name={year}> {year}</Year>
+                  <BlogYear yearOnTop={year === topYear} year={year}></BlogYear>
 
                   {posts
                     .filter((post) => post.frontmatter.year == year)
@@ -151,6 +162,15 @@ const YearWrapper = styled.div`
   }
 `;
 
+const fadeIn = keyframes`
+  from {
+   opacity: 0;
+  }
+  to {
+    opacity: 1; 
+  }
+`;
+
 const Year = styled.div`
   display: block;
   position: sticky;
@@ -160,20 +180,10 @@ const Year = styled.div`
   background-color: #fff;
   font-weight: 700;
   margin-bottom: 24px;
-
+  border-bottom: solid 1px transparent;
   @media ${QUERIES.phone} {
     margin-left: -1.5rem;
   }
-`;
-
-const YearBoundary = styled.div`
-  border: solid 1px red;
-`;
-
-const PostsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
 `;
 
 const IndividualPostWrapper = styled.div`
@@ -238,10 +248,4 @@ const Summary = styled.span`
   max-width: fit-content;
   @media ${QUERIES.phone} {
   }
-`;
-
-const ReadStatus = styled.em`
-  color: ${COLORS.primary};
-  font-size: 14px;
-  text-decoration: unset !important;
 `;

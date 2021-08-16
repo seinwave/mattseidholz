@@ -18,9 +18,9 @@ export default function NavBar() {
   return (
     <div className="wrapper">
       {" "}
-      <div className="logo">
+      <Logo className="logo">
         <Link href="/">MS</Link>
-      </div>
+      </Logo>
       <BurgerButton open={open} setOpen={setOpen}></BurgerButton>
       <div className="navlinks">
         {navMenu.map((item, index) => {
@@ -40,3 +40,30 @@ export default function NavBar() {
     </div>
   );
 }
+
+const Logo = styled.div`
+  background-color: black;
+  color: white;
+  font-size: 36px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  &:hover {
+    transition-duration: 0.5s;
+    box-shadow: 0px 0px 25px 4px #0ff, 0 0 15px 2px #f0f;
+  }
+`;
+
+const NavLink = styled.a`
+  position: relative;
+  font-size: 18px;
+  margin: 0 1rem;
+
+  &:active:after {
+  }
+
+  &:hover {
+  }
+`;

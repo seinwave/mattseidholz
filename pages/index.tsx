@@ -47,7 +47,7 @@ export default function Index({}) {
         <HeroRow>
           <HeroDescription>
             Matt Seidholz is a full-stack{" "}
-            {partyTime ? <BagelDJText>BAGEL DJ</BagelDJText> : "developer"} in
+            {partyTime ? <BagelDJText>bagel dj</BagelDJText> : "developer"} in
             Brooklyn.
           </HeroDescription>
         </HeroRow>
@@ -106,8 +106,12 @@ const RotationContainer = styled.div`
   animation-iteration-count: infinite;
   animation-timing-function: linear;
   &:hover {
+    transition-duration: 5s;
     animation-duration: 500ms;
     cursor: grab;
   }
 `;
-const RotatingImage = styled(Image)``;
+const RotatingImage = styled(Image)`
+  &:hover {
+  }
+`;

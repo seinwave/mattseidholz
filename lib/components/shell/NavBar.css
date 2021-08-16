@@ -10,16 +10,6 @@
   background-color: #fff;
 }
 
-.logo {
-  background-color: black;
-  color: white;
-  font-size: 36px;
-  padding: 6px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
 .nav-link {
   position: relative;
   font-size: 18px;
@@ -34,6 +24,11 @@
   height: 2px;
   background: transparent;
   width: 0%;
+}
+
+.nav-link:hover {
+  color: #dcdcdc;
+  transition-duration: 0.2s;
 }
 
 .nav-link:hover::after {
@@ -99,9 +94,4 @@
   .burger-container {
     display: revert;
   }
-}
-
-.top-year {
-  border-bottom: solid 2px #dcdcdc;
-  transition: border-bottom 2s;
 }
