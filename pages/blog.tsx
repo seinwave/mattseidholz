@@ -15,42 +15,82 @@ export default function Blog({ posts }) {
   years = [...uniqueYears];
   const sortedYears = years.sort((a, b) => (a > b ? -1 : 1));
 
-  const [topYear, setTopYear] = React.useState<number | undefined>();
   const [scrollValue, setScrollValue] = React.useState<number>(0);
 
-  const yearsRef = React.useRef([]);
+  let initialYearMap = years.reduce((allYears, currentYear) => {
+    allYears[currentYear] = "idle";
+    return allYears;
+  }, {});
 
-  function handleScroll() {
-    const clientY = window.scrollY;
-
-    yearsRef.current.map((ref, i) => {
-      const rect = ref.getBoundingClientRect();
-
-      const numericalYear = parseInt(ref.firstChild.textContent);
-      const { y, height } = rect;
-
-      let scrollingValue = document.documentElement.scrollTop;
-
-      if (scrollingValue > scrollValue) {
-        if (topYear !== numericalYear && y < 99 && y > 0) {
-          setTopYear(numericalYear);
-        }
-      } else {
-        if (y < 0 && y + height > 0) {
-          setTopYear(numericalYear);
-        }
-      }
-
-      setScrollValue(() => (scrollingValue <= 0 ? 0 : scrollingValue));
-    });
+  function scrollUpReset(exceptionYear) {
+    for (let year in initialYearMap) {
+      if (year !== exceptionYear) year = "idle";
+    }
+    return initialYearMap;
   }
 
-  React.useEffect(() => {
-    yearsRef.current = yearsRef.current.slice(0, years.length);
-    window.addEventListener("scroll", handleScroll);
+  const [yearMap, setYearMap] = React.useState(initialYearMap);
 
-    return () => window.removeEventListener("scroll", handleScroll);
-  });
+  function shallowEqual(object1, object2) {
+    const keys1 = Object.keys(object1);
+    const keys2 = Object.keys(object2);
+
+    if (keys1.length !== keys2.length) {
+      return false;
+    }
+
+    for (let key of keys1) {
+      if (object1[key] !== object2[key]) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  // function handleScroll() {
+  //   yearsRef.current.map((ref, i) => {
+  //     const rect = ref.getBoundingClientRect();
+  //     const numericalYear = parseInt(ref.firstChild.textContent);
+  //     const { y, height } = rect;
+  //     const scrollingValue = document.documentElement.scrollTop;
+  //     if (
+  //       scrollingValue > scrollValue &&
+  //       initialYearMap[numericalYear] !== "top"
+  //     ) {
+  //       if (y < 200 && y > 0 && initialYearMap[numericalYear] !== "top") {
+  //         if (
+  //           initialYearMap[numericalYear + 1] &&
+  //           initialYearMap[numericalYear + 1] !== "fading"
+  //         ) {
+  //           initialYearMap[numericalYear + 1] = "fading";
+  //         }
+  //         initialYearMap[numericalYear] = "top";
+  //         if (!shallowEqual(yearMap, initialYearMap)) {
+  //           setYearMap(initialYearMap);
+  //         }
+  //       }
+  //     } else {
+  //       if (y < 0 && y + height > 0) {
+  //         scrollUpReset(numericalYear);
+  //         initialYearMap[numericalYear] = "top";
+  //         if (!shallowEqual(yearMap, initialYearMap)) {
+  //           console.log("shallow not equal");
+  //           setYearMap(initialYearMap);
+  //         }
+  //       }
+  //     }
+
+  //     setScrollValue(() => (scrollingValue <= 0 ? 0 : scrollingValue));
+  //   });
+  // }
+
+  // React.useEffect(() => {
+  //   yearsRef.current = yearsRef.current.slice(0, years.length);
+  //   window.addEventListener("scroll", handleScroll);
+
+  //   return () => window.removeEventListener("scroll", handleScroll);
+  // }, []);
 
   return (
     <>
@@ -61,11 +101,8 @@ export default function Blog({ posts }) {
           <BlogList>
             {sortedYears.map((year, i) => {
               return (
-                <YearWrapper
-                  ref={(el) => (yearsRef.current[i] = el)}
-                  key={uuid()}
-                >
-                  <BlogYear yearOnTop={year === topYear} year={year}></BlogYear>
+                <YearWrapper key={uuid()}>
+                  <BlogYear year={year}></BlogYear>
 
                   {posts
                     .filter((post) => post.frontmatter.year == year)
@@ -148,9 +185,7 @@ const YearWrapper = styled.div`
   display: block;
   width: 100%;
   padding: 8px 36px;
-
   position: relative;
-
   &:last-of-type {
     margin-bottom: 50vh;
   }
@@ -168,21 +203,6 @@ const fadeIn = keyframes`
   }
   to {
     opacity: 1; 
-  }
-`;
-
-const Year = styled.div`
-  display: block;
-  position: sticky;
-  top: 96px;
-  font-size: 24px;
-  padding: 1rem 0px 0px 8px;
-  background-color: #fff;
-  font-weight: 700;
-  margin-bottom: 24px;
-  border-bottom: solid 1px transparent;
-  @media ${QUERIES.phone} {
-    margin-left: -1.5rem;
   }
 `;
 

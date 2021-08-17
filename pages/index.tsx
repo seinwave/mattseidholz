@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import styled, { keyframes } from "styled-components";
 import Image from "next/image";
-import { ServerStyleSheet } from "styled-components";
-import { Helmet } from "react-helmet";
 import { FONTSIZES } from "../styles/CONSTANTS";
 
 import NavBar from "../lib/components/shell/NavBar";
@@ -46,9 +44,7 @@ export default function Index({}) {
 
         <HeroRow>
           <HeroDescription>
-            Matt Seidholz is a full-stack{" "}
-            {partyTime ? <BagelDJText>bagel dj</BagelDJText> : "developer"} in
-            Brooklyn.
+            Matt Seidholz is a full-stack developer Brooklyn.
           </HeroDescription>
         </HeroRow>
       </Wrapper>
@@ -74,18 +70,6 @@ const HeroDescription = styled.div`
   font-size: ${FONTSIZES.postTitle};
   text-align: center;
   padding-top: 45px;
-`;
-
-const partyMode = keyframes`
-0%{ color: red;}
-49%{color: blue;}
-60%{color: transparent;}
-99%{color: purple;}
-100%{color: black;}
-`;
-
-const BagelDJText = styled.span`
-  animation: ${partyMode} 0.5s infinite;
 `;
 
 const spin = keyframes`

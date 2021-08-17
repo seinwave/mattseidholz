@@ -51,7 +51,7 @@ const Logo = styled.div`
   justify-content: center;
 
   &:hover {
-    transition-duration: 0.5s;
+    transition-duration: 0.2s;
     box-shadow: 0px 0px 25px 4px #0ff, 0 0 15px 2px #f0f;
   }
 `;
