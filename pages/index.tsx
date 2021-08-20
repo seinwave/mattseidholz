@@ -89,13 +89,10 @@ const RotationContainer = styled.div`
   animation-duration: 11000ms;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
+  transition-duration: 5s;
   &:hover {
-    transition-duration: 5s;
     animation-duration: 500ms;
     cursor: grab;
   }
 `;
-const RotatingImage = styled(Image)`
-  &:hover {
-  }
-`;
+const RotatingImage = styled(Image)``;

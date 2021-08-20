@@ -42,6 +42,7 @@ export default function NavBar() {
 }
 
 const Logo = styled.div`
+  display: inline-block;
   background-color: black;
   color: white;
   font-size: 36px;
@@ -49,10 +50,11 @@ const Logo = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  cursor: pointer;
+  transition: transform 0.4s ease-in-out;
 
   &:hover {
-    transition-duration: 0.2s;
-    box-shadow: 0px 0px 25px 4px #0ff, 0 0 15px 2px #f0f;
+    transform: rotate(-15deg);
   }
 `;
 
