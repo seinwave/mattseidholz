@@ -1,8 +1,10 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { animated } from "react-spring";
 import styled from "styled-components/";
 import BurgerButton from "./BurgerButton";
+import useBoop from "../../hooks/useBoop/useBoop.hook";
 
 export default function NavBar() {
   const router = useRouter();
@@ -15,12 +17,22 @@ export default function NavBar() {
     { title: "SNIPPETS", path: "/snippets" },
   ];
 
+  const [style, trigger] = useBoop({
+    rotation: -15,
+    scale: 1.003,
+    timing: 200,
+  });
+
   return (
     <div className="wrapper">
       {" "}
-      <Logo className="logo">
-        <Link href="/">MS</Link>
-      </Logo>
+      <LogoContainer onMouseEnter={trigger}>
+        <animated.div style={style}>
+          <Link href="/">
+            <Logo className="logo">MS</Logo>
+          </Link>
+        </animated.div>
+      </LogoContainer>
       <BurgerButton open={open} setOpen={setOpen}></BurgerButton>
       <div className="navlinks">
         {navMenu.map((item, index) => {
@@ -41,8 +53,11 @@ export default function NavBar() {
   );
 }
 
-const Logo = styled.div`
+const LogoContainer = styled.div`
   display: inline-block;
+`;
+
+const Logo = styled.div`
   background-color: black;
   color: white;
   font-size: 36px;
@@ -51,21 +66,12 @@ const Logo = styled.div`
   flex-direction: column;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.4s ease-in-out;
-
-  &:hover {
-    transform: rotate(-15deg);
-  }
+  border-radius: 5px;
 `;
 
 const NavLink = styled.a`
+  display: inline-block;
   position: relative;
   font-size: 18px;
   margin: 0 1rem;
-
-  &:active:after {
-  }
-
-  &:hover {
-  }
 `;

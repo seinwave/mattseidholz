@@ -6,6 +6,12 @@
             "dom.iterable",
             "esnext"
         ],
+        "baseUrl": ".",
+        "paths": {
+            "@hooks/*": ["lib/components/hooks"],
+            "@shell/*": ["libcomponents/shell"],
+
+        },
         "downlevelIteration": true,
         "allowJs": true,
         "skipLibCheck": true,
@@ -23,7 +29,7 @@
     "include": [
         "next-env.d.ts",
         "**/*.ts",
-        "**/*.tsx"
+        "**/*.tsx", "lib/effects/Boop/index.js"
     ],
     "exclude": [
         "node_modules"
